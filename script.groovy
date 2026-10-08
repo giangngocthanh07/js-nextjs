@@ -33,5 +33,19 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy') {
+            steps {
+                withCredentials([
+                    sshUserPrivateKey(credentialsId:'ssh-login', keyFileVariable:'SSH_KEY', usernameVariable:'SSH_USER'), string(credentialsId:'ip-server-run', variable:'IP_SERVER_RUN')
+                ]) {
+                sh'''
+                    ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${SSH_USER}@${IP_SERVER_RUN}
+                    ls -la
+                '''
+
+                }
+            }
+        }
     }
 }
