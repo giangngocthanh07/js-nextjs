@@ -4,30 +4,32 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', credentialsId: 'github-login' ,url: 'https://github.com/vulebaolong/devops_04.git'
+                git branch: 'main', credentialsId: 'github-login' ,url: 'https://github.com/giangngocthanh07/js-nextjs.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t go_gin_be_image ./go_gin_be'
+                sh 'docker build -t ntgiang0709/js_nextjs_image:latest .'
             }
         }
 
-        // stage('Deploy Container') {
-        //     steps {
-        //         sh'''
-        //             docker rm go_gin_be -f || true
-        //             docker run --name go_gin_be -d -p 8002:8080 go_gin_be_image
-        //         '''
-        //     }
-        // }
-        
-        stage('Deploy Container') {
-            // Sử dụng plugin ssh agent
+        stage('Login Docker') {
             steps {
-                // chuyển image qua bên server run docker save | load
+                withCredentials([
+                    usernamePassword(credentialsId:'docker-login', usernameVariable:'DOCKER_USER', passwordVariable:'DOCKER_PASS')
+                ]) {
+                    sh'''
+                        docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+                    '''
+                }
+            }
+        }
+
+        stage('Push Image To Docker Hub') {
+            steps {
                 sh'''
+                    docker push ntgiang0709/js_nextjs_image:latest
                 '''
             }
         }
