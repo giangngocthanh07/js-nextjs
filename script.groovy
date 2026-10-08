@@ -40,12 +40,13 @@ pipeline {
                     sshUserPrivateKey(credentialsId:'ssh-login', keyFileVariable:'SSH_KEY', usernameVariable:'SSH_USER'), string(credentialsId:'ip-server-run', variable:'IP_SERVER_RUN')
                 ]) {
                 sh'''
-                    ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${SSH_USER}@${IP_SERVER_RUN}
+                    ssh -o StrictHostKeyChecking=no -i ${SSH_KEY} ${SSH_USER}@${IP_SERVER_RUN} "
                         cd /home/ubuntu/devops_04/docker-compose
 
                         docker compose pull js_nextjs
                         docker compose up -d --force-recreate js_nextjs
                         docker image prune -f
+                    "
                 '''
 
                 }
